@@ -1,35 +1,30 @@
-// office-artifacts-3af971d2: one-line museum placard for an ordinary
-// office object, written as if it were an ancient artifact. This
-// program writes that single line to /output/entry.txt, where the
-// gate reads it. That is all it has to do.
+// office-artifacts-3af971d2: a museum placard for a stapler, catalogued
+// as though it were an ancient artifact. One line of deadpan label
+// copy; the program writes it to entry.txt and nothing else.
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-const OUTPUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const OUT_DIR = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
 
-// The placard turns a stapler into a ritual object: the Binding Rite
-// joins two sheets that had never met, and the donor line — a whole
-// department that no longer speaks to itself — sells the joke deadpan.
-// Catalogue craft does the work: a date, a material (steel and
-// resentment), a rite, a provenance. Every word earns its place; the
-// punch lands on the last word.
+// The joke lives in the catalogue voice: a date, a material that is
+// half steel and half grudge, a solemn rite (the Binding Rite) for
+// joining two sheets that had never met, and a donor credit for a
+// department that no longer speaks to itself. The last word is the
+// punchline, so the line is built to land there and stop.
 const LINE =
   'Stapler, c. 1998. Steel and resentment. Used in the Binding Rite to join two sheets that had never met. Donated by the department that no longer speaks to itself.';
 
-if (LINE.length < 1 || LINE.length > 180 || !LINE.trim()) {
-  console.error(`entry line is ${LINE.length} chars, must be 1-180`);
-  process.exit(1);
-}
-if (LINE !== LINE.trim()) {
-  console.error('entry line must not start or end with whitespace');
-  process.exit(1);
-}
-if (LINE.includes('\n')) {
-  console.error('entry line must be a single line');
+function fail(message: string): never {
+  console.error(message);
   process.exit(1);
 }
 
-mkdirSync(OUTPUT_DIR, { recursive: true });
-writeFileSync(join(OUTPUT_DIR, 'entry.txt'), LINE, 'utf8');
-console.log(`wrote ${LINE.length} chars to ${join(OUTPUT_DIR, 'entry.txt')}`);
+if (LINE.length > 180) fail(`placard is ${LINE.length} chars, over the 180 limit`);
+if (LINE.length < 1) fail('placard is empty');
+if (LINE.trim() !== LINE) fail('placard must not start or end with whitespace');
+if (LINE.includes('\n')) fail('placard must be a single line');
+
+mkdirSync(OUT_DIR, { recursive: true });
+writeFileSync(join(OUT_DIR, 'entry.txt'), LINE, 'utf8');
+console.log(`placard written (${LINE.length} chars)`);
 console.log(LINE);
